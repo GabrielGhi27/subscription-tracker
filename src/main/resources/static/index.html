@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Tracker</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f0f1a;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        /* AUTH */
+        #auth-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .auth-card {
+            background: #1a1a2e;
+            border: 1px solid #2d2d4e;
+            border-radius: 16px;
+            padding: 40px;
+            width: 400px;
+        }
+
+        .auth-card h1 {
+            text-align: center;
+            color: #7c6af7;
+            margin-bottom: 8px;
+            font-size: 24px;
+        }
+
+        .auth-card p {
+            text-align: center;
+            color: #888;
+            margin-bottom: 28px;
+            font-size: 14px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 24px;
+            background: #0f0f1a;
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: transparent;
+            color: #888;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .auth-tab.active {
+            background: #7c6af7;
+            color: white;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0f0f1a;
+            border: 1px solid #2d2d4e;
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 14px;
+            margin-bottom: 12px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus { border-color: #7c6af7; }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #7c6af7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 4px;
+        }
+
+        .btn:hover { background: #6a58e0; }
+
+        .btn-danger {
+            background: transparent;
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+            width: auto;
+        }
+
+        .btn-danger:hover { background: #e74c3c; color: white; }
+
+        .error { color: #e74c3c; font-size: 13px; margin-top: 8px; text-align: center; }
+
+        /* DASHBOARD */
+        #dashboard-section { display: none; }
+
+        nav {
+            background: #1a1a2e;
+            border-bottom: 1px solid #2d2d4e;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h1 { color: #7c6af7; font-size: 20px; }
+
+        .nav-right { display: flex; align-items: center; gap: 16px; }
+
+        .nav-right span { color: #888; font-size: 14px; }
+
+        .btn-logout {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid #2d2d4e;
+            color: #888;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+            width: auto;
+        }
+
+        .btn-logout:hover { border-color: #e74c3c; color: #e74c3c; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 32px 16px; }
+
+        /* SUMMARY */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .summary-card {
+            background: #1a1a2e;
+            border: 1px solid #2d2d4e;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .summary-card .label {
+            color: #888;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .summary-card .value {
+            color: #7c6af7;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .summary-card .value.green { color: #2ecc71; }
+
+        /* ADD FORM */
+        .add-section {
+            background: #1a1a2e;
+            border: 1px solid #2d2d4e;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .add-section h2 {
+            margin-bottom: 16px;
+            font-size: 16px;
+            color: #e0e0e0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .form-grid input, .form-grid select {
+            margin-bottom: 0;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0f0f1a;
+            border: 1px solid #2d2d4e;
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .btn-add {
+            grid-column: span 3;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        /* SUBSCRIPTIONS LIST */
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .list-header h2 { font-size: 16px; }
+
+        .sub-list { display: flex; flex-direction: column; gap: 12px; }
+
+        .sub-card {
+            background: #1a1a2e;
+            border: 1px solid #2d2d4e;
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.2s;
+        }
+
+        .sub-card:hover { border-color: #7c6af7; }
+
+        .sub-name { font-weight: 600; font-size: 16px; }
+
+        .sub-meta { color: #888; font-size: 13px; margin-top: 4px; }
+
+        .sub-amount { font-size: 20px; font-weight: 700; color: #7c6af7; }
+
+        .sub-cycle {
+            font-size: 11px;
+            background: #2d2d4e;
+            padding: 3px 8px;
+            border-radius: 20px;
+            color: #888;
+            margin-top: 4px;
+            display: inline-block;
+        }
+
+        .empty {
+            text-align: center;
+            color: #888;
+            padding: 40px;
+            border: 1px dashed #2d2d4e;
+            border-radius: 12px;
+        }
+
+        /* Stilizare pentru Iconițe și Badge-uri */
+        .sub-icon {
+            width: 48px;
+            height: 48px;
+            background: #2d2d4e;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            color: #7c6af7;
+            margin-right: 16px;
+        }
+
+        .sub-card-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .badge-urgent {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .badge-safe {
+            background: rgba(46, 204, 113, 0.1);
+            color: #2ecc71;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            min-width: 250px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            /* Animația de intrare: pornește de afară din ecran (dreapta) */
+            transform: translateX(120%);
+            animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .toast.success { background: #2ecc71; }
+        .toast.error { background: #e74c3c; }
+
+        @keyframes slideInRight {
+            to { transform: translateX(0); }
+        }
+        @keyframes fadeOutRight {
+            to { transform: translateX(120%); opacity: 0; }
+        }
+
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 15, 26, 0.8);
+            backdrop-filter: blur(5px); /* Efect modern de sticlă mată */
+            z-index: 1000;
+            display: none; /* Ascuns implicit */
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #1a1a2e;
+            border: 1px solid #2d2d4e;
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 450px;
+            transform: translateY(50px) scale(0.9);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        /* Butonul plutitor de adăugare */
+        .fab-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #7c6af7;
+            color: white;
+            font-size: 24px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(124, 106, 247, 0.4);
+            transition: transform 0.2s ease, background 0.2s ease;
+            z-index: 900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .fab-button:hover {
+            transform: scale(1.1);
+            background: #6a58e0;
+        }
+        #dashboard-section {
+            display: none;
+            flex-direction: column;
+            min-height: 100vh; /* Ocupă tot ecranul pe înălțime */
+        }
+
+        .container {
+            flex: 1; /* Împinge footer-ul în jos */
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 16px;
+        }
+
+        nav {
+            background: rgba(15, 15, 26, 0.75); /* Ușor transparent */
+            backdrop-filter: blur(12px); /* Efect de sticlă mată */
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(124, 106, 247, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 16px 0;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+
+        .nav-container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 32px;
+
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: relative;
+            min-height: 50px;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #e0e0e0;
+
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            background: rgba(15, 25, 26, 2);
+            padding: 8px 16px;
+            border-radius: 12px;
+        }
+        .nav-logo i {
+            color: #7c6af7;
+            font-size: 40px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7c6af7, #3498db);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: white;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(124, 106, 247, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-greeting { font-size: 12px; color: #888; letter-spacing: 0.5px; text-transform: uppercase; }
+        .user-email { font-size: 14px; font-weight: 600; color: #e0e0e0; }
+
+        .btn-logout {
+            padding: 8px 16px;
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-logout:hover {
+            background: #e74c3c;
+            color: white;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        footer {
+            padding: 24px 0;
+            text-align: center;
+            border-top: 1px solid #2d2d4e;
+            background: #0f0f1a;
+            color: #888;
+            font-size: 13px;
+            margin-top: auto; /* Îl împinge mereu jos */
+        }
+
+        .footer-heart {
+            color: #e74c3c;
+            animation: heartbeat 1.5s infinite;
+            display: inline-block;
+            margin: 0 4px;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .btn-edit {
+            background: transparent;
+            border: 1px solid #3498db;
+            color: #3498db;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn-edit:hover { background: #3498db; color: white; }
+    </style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="auth-section">
+    <div class="auth-card">
+        <h1>💳 SubTracker</h1>
+        <p>Gestionează-ți abonamentele</p>
+
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="showTab('login')">Login</button>
+            <button class="auth-tab" onclick="showTab('register')">Register</button>
+        </div>
+
+        <!-- Login -->
+        <div id="login-form">
+            <input type="email" id="login-email" placeholder="Email">
+            <input type="password" id="login-password" placeholder="Parolă">
+            <button class="btn" onclick="login()">Intră în cont</button>
+            <div class="error" id="login-error"></div>
+        </div>
+
+        <!-- Register -->
+        <div id="register-form" style="display:none">
+            <input type="text" id="reg-name" placeholder="Numele tău">
+            <input type="email" id="reg-email" placeholder="Email">
+            <input type="password" id="reg-password" placeholder="Parolă">
+            <button class="btn" onclick="register()">Creează cont</button>
+            <div class="error" id="register-error"></div>
+        </div>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard-section">
+    <nav>
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>SubTracker</span>
+            </div>
+            <div class="nav-user">
+                <div class="user-profile">
+                    <div class="user-avatar" id="user-avatar-initial">U</div>
+                    <div class="user-info">
+                        <span class="user-greeting">Bun venit,</span>
+                        <span class="user-email" id="user-email"></span>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="logout()" title="Ieși din cont">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- Summary -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="label">Total abonamente</div>
+                <div class="value" id="s-total">-</div>
+            </div>
+            <div class="summary-card">
+                <div class="label">Cheltuieli lunare</div>
+                <div class="value" id="s-monthly">-</div>
+            </div>
+            <div class="summary-card">
+                <div class="label">Cheltuieli anuale</div>
+                <div class="value" id="s-yearly">-</div>
+            </div>
+            <div class="summary-card">
+                <div class="label">Cel mai scump</div>
+                <div class="value green" id="s-expensive">-</div>
+            </div>
+        </div>
+        <div class="add-section" id="chart-container" style="display: none;">
+            <h2>📊 Distribuția cheltuielilor</h2>
+            <div style="width: 100%; max-width: 350px; margin: 0 auto;">
+                <canvas id="expensesChart"></canvas>
+            </div>
+        </div>
+        <!-- Add Subscription -->
+        <button class="fab-button" onclick="openModal()" title="Adaugă Abonament Nou">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+
+        <div class="modal-overlay" id="add-modal" onclick="closeModal(event)">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h2 id="modal-title" style="font-size: 20px;">✨ Adaugă abonament</h2>
+                    <button onclick="closeModal()" style="background:none; border:none; color:#888; font-size:20px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <input type="text" id="f-name" placeholder="Nume (ex: Netflix)">
+                    <div style="display: flex; gap: 12px;">
+                        <input type="number" id="f-amount" placeholder="Sumă" style="flex: 2;">
+                        <input type="text" id="f-currency" placeholder="Monedă (RON)" style="flex: 1;">
+                    </div>
+                    <input type="date" id="f-date">
+                    <select id="f-cycle">
+                        <option value="MONTHLY">Lunar</option>
+                        <option value="YEARLY">Anual</option>
+                    </select>
+                    <button class="btn btn-add" id="btn-save-modal" onclick="saveSubscription()" style="margin-top: 8px;">Adaugă acum</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subscriptions List -->
+        <div class="list-header">
+            <h2>📋 Abonamentele tale</h2>
+        </div>
+        <div class="sub-list" id="sub-list"></div>
+
+    </div>
+    <footer>
+        &copy; 2026 SubTracker. Construit cu <i class="fa-solid fa-heart footer-heart"></i> de Gabriel Ghiorghita.
+    </footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script>
+    const API = '/api';
+    let token = localStorage.getItem('token');
+    let userId = localStorage.getItem('userId');
+    let myChart = null;
+    let currentSubscriptions = []; // Va ține minte lista curentă
+    let editingId = null; // Va ține minte ID-ul abonamentului pe care îl edităm
+
+    // Dacă e deja logat
+    if (token && userId) showDashboard();
+
+    // ---- AUTH ----
+    function showTab(tab) {
+        document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+        document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+        document.querySelectorAll('.auth-tab').forEach((t, i) => {
+            t.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'register' && i === 1));
+        });
+    }
+
+    async function login() {
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        try {
+            const res = await fetch(`${API}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Eroare login');
+            token = data.token;
+            localStorage.setItem('token', token);
+            await fetchUserId(email);
+            showDashboard();
+        } catch (e) {
+            document.getElementById('login-error').textContent = e.message;
+        }
+    }
+
+    async function register() {
+        const name = document.getElementById('reg-name').value;
+        const email = document.getElementById('reg-email').value;
+        const password = document.getElementById('reg-password').value;
+        try {
+            const res = await fetch(`${API}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Eroare register');
+            token = data.token;
+            localStorage.setItem('token', token);
+            await fetchUserId(email);
+            showDashboard();
+        } catch (e) {
+            document.getElementById('register-error').textContent = e.message;
+        }
+    }
+
+    async function fetchUserId(email) {
+        const res = await fetch(`${API}/auth/me`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        userId = data.id;
+        localStorage.setItem('userId', userId);
+        localStorage.setItem('userEmail', email);
+    }
+
+    function logout() {
+        localStorage.clear();
+        token = null;
+        userId = null;
+        document.getElementById('auth-section').style.display = 'flex';
+        document.getElementById('dashboard-section').style.display = 'none';
+    }
+
+    // ---- DASHBOARD ----
+    function showDashboard() {
+        document.getElementById('auth-section').style.display = 'none';
+        document.getElementById('dashboard-section').style.display = 'block';
+        document.getElementById('user-email').textContent = localStorage.getItem('userEmail') || '';
+        loadData();
+    }
+
+    async function loadData() {
+        await loadSubscriptions();
+        await loadSummary();
+    }
+
+    async function loadSubscriptions() {
+        const res = await fetch(`${API}/subscriptions/user/${userId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        let data = await res.json();
+        const list = document.getElementById('sub-list');
+        const chartContainer = document.getElementById('chart-container');
+
+        if (data.length === 0) {
+            list.innerHTML = '<div class="empty">Nu ai niciun abonament încă. Adaugă primul! 👆</div>';
+            chartContainer.style.display = 'none';
+            return;
+        }
+
+        // 1. Logica de sortare: Cele care expiră cel mai curând apar primele
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        currentSubscriptions = data;
+        data.sort((a, b) => new Date(a.billingDate) - new Date(b.billingDate));
+
+        // 2. Funcție pentru a alege iconița potrivită bazată pe nume
+        const getIconForName = (name) => {
+            const n = name.toLowerCase();
+            if (n.includes('netflix') || n.includes('hbo') || n.includes('disney') || n.includes('prime')) return 'fa-solid fa-film';
+            if (n.includes('spotify') || n.includes('apple music') || n.includes('youtube')) return 'fa-brands fa-spotify';
+            if (n.includes('sala') || n.includes('gym') || n.includes('fitness')) return 'fa-solid fa-dumbbell';
+            if (n.includes('internet') || n.includes('orange') || n.includes('vodafone') || n.includes('digi')) return 'fa-solid fa-wifi';
+            if (n.includes('cloud') || n.includes('drive') || n.includes('icloud')) return 'fa-solid fa-cloud';
+            return 'fa-solid fa-credit-card'; // Iconiță default
+        };
+
+        // 3. Generăm lista HTML îmbunătățită
+        list.innerHTML = data.map(sub => {
+            const billDate = new Date(sub.billingDate);
+            const diffTime = billDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            // Setăm badge-ul în funcție de zilele rămase
+            let urgencyBadge = '';
+            if (diffDays < 0) {
+                urgencyBadge = `<span class="badge-urgent"><i class="fa-solid fa-triangle-exclamation"></i> Plată întârziată!</span>`;
+            } else if (diffDays <= 7) {
+                urgencyBadge = `<span class="badge-urgent">Explira în ${diffDays} zile!</span>`;
+            } else {
+                urgencyBadge = `<span class="badge-safe">În ${diffDays} zile</span>`;
+            }
+
+            return `
+            <div class="sub-card">
+                <div class="sub-card-left">
+                    <div class="sub-icon">
+                        <i class="${getIconForName(sub.name)}"></i>
+                    </div>
+                    <div>
+                        <div class="sub-name">${sub.name} ${urgencyBadge}</div>
+                        <div class="sub-meta"><i class="fa-regular fa-calendar"></i> Următoarea plată: <b>${sub.billingDate}</b></div>
+                        <span class="sub-cycle">${sub.cycle === 'MONTHLY' ? 'Lunar' : 'Anual'}</span>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:16px">
+                    <div style="text-align: right;">
+                        <div class="sub-amount">${sub.amount} <span style="font-size:14px; color:#888;">${sub.currency}</span></div>
+                    </div>
+                    <button class="btn-edit" onclick="openEditModal(${sub.id})" title="Editează">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button class="btn-danger" onclick="deleteSubscription(${sub.id})" title="Șterge">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `}).join('');
+
+        chartContainer.style.display = 'block';
+        renderChart(data);
+    }
+
+    function renderChart(subscriptions) {
+        const ctx = document.getElementById('expensesChart').getContext('2d');
+
+        // Dacă există deja un grafic desenat, îl distrugem (pentru a-l redesena actualizat)
+        if (myChart != null) {
+            myChart.destroy();
+        }
+
+        // Extragem numele și sumele
+        const labels = subscriptions.map(sub => sub.name);
+        const amounts = subscriptions.map(sub => sub.amount);
+
+        // Culori vibrante pentru grafic
+        const colors = ['#7c6af7', '#e74c3c', '#2ecc71', '#f1c40f', '#9b59b6', '#e67e22', '#3498db'];
+
+        myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Sumă',
+                    data: amounts,
+                    backgroundColor: colors,
+                    borderWidth: 0,
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { color: '#e0e0e0', font: { family: "'Segoe UI', sans-serif" } }
+                    }
+                },
+                layout: { padding: 10 }
+            }
+        });
+    }
+
+    async function loadSummary() {
+        const res = await fetch(`${API}/subscriptions/summary/${userId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        document.getElementById('s-total').textContent = data.totalSubscriptions;
+        document.getElementById('s-monthly').textContent = data.monthlyTotal.toFixed(2) + ' RON';
+        document.getElementById('s-yearly').textContent = data.yearlyTotal.toFixed(2) + ' RON';
+        document.getElementById('s-expensive').textContent = data.mostExpensive;
+    }
+
+
+
+    async function deleteSubscription(id) {
+        if (!confirm('Sigur vrei să ștergi acest abonament?')) return; // Confirmare scurtă
+
+        try {
+            await fetch(`${API}/subscriptions/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            showToast('Abonament șters definitiv.', 'success');
+            loadData();
+        } catch (e) {
+            showToast('A apărut o eroare la ștergere.', 'error');
+        }
+    }
+
+    // Deschide modalul curat pentru o ADĂUGARE NOUĂ
+    function openModal() {
+        editingId = null; // Resetăm starea
+
+        // Curățăm câmpurile
+        document.getElementById('f-name').value = '';
+        document.getElementById('f-amount').value = '';
+        document.getElementById('f-date').value = '';
+        document.getElementById('f-currency').value = 'RON'; // Default
+
+        // Setăm textele pentru Mod Adăugare
+        document.getElementById('modal-title').innerHTML = '✨ Adaugă abonament';
+        document.getElementById('btn-save-modal').textContent = 'Adaugă acum';
+
+        document.getElementById('add-modal').classList.add('active');
+    }
+
+    // Deschide modalul completat pentru EDITARE
+    function openEditModal(id) {
+        editingId = id; // Salvăm ID-ul pe care lucrăm
+
+        // Găsim abonamentul în lista salvată
+        const sub = currentSubscriptions.find(s => s.id === id);
+
+        // Populăm formularul cu datele lui
+        document.getElementById('f-name').value = sub.name;
+        document.getElementById('f-amount').value = sub.amount;
+        document.getElementById('f-currency').value = sub.currency;
+        document.getElementById('f-date').value = sub.billingDate;
+        document.getElementById('f-cycle').value = sub.cycle;
+
+        // Setăm textele pentru Mod Editare
+        document.getElementById('modal-title').innerHTML = '✏️ Editează abonamentul';
+        document.getElementById('btn-save-modal').textContent = 'Salvează modificările';
+
+        document.getElementById('add-modal').classList.add('active');
+    }
+
+    // Funcție UNIVERSALĂ pentru Salvare (știe singură dacă e Add sau Edit)
+    async function saveSubscription() {
+        const body = {
+            name: document.getElementById('f-name').value,
+            amount: parseFloat(document.getElementById('f-amount').value),
+            currency: document.getElementById('f-currency').value,
+            billingDate: document.getElementById('f-date').value,
+            cycle: document.getElementById('f-cycle').value,
+            user: { id: parseInt(userId) }
+        };
+
+        try {
+            // Dacă editingId are un număr, facem PUT (Editare). Dacă e null, facem POST (Adăugare)
+            const url = editingId ? `${API}/subscriptions/${editingId}` : `${API}/subscriptions`;
+            const method = editingId ? 'PUT' : 'POST';
+
+            const res = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(body)
+            });
+
+            if (!res.ok) throw new Error();
+
+            closeModal();
+            showToast(editingId ? 'Abonament actualizat!' : 'Abonament adăugat!', 'success');
+            loadData();
+        } catch (e) {
+            showToast('A apărut o eroare la salvare.', 'error');
+        }
+    }
+
+    function closeModal(event) {
+
+        if (!event || event.target.id === 'add-modal') {
+            document.getElementById('add-modal').classList.remove('active');
+        }
+    }
+
+    function showToast(message, type = 'success') {
+        // Creăm containerul dacă nu există
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            document.body.appendChild(container);
+        }
+
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+
+        const icon = type === 'success' ? '<i class="fa-solid fa-check-circle"></i>' : '<i class="fa-solid fa-circle-exclamation"></i>';
+        toast.innerHTML = `${icon} <span>${message}</span>`;
+
+        container.appendChild(toast);
+
+        // Oprim animația și o pornim pe cea de ieșire după 3 secunde
+        setTimeout(() => {
+            toast.style.animation = 'fadeOutRight 0.4s ease forwards';
+            // Ștergem elementul din HTML după ce se termină animația
+            setTimeout(() => toast.remove(), 400);
+        }, 3000);
+    }
+</script>
+</body>
+</html>
