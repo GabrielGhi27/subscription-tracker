@@ -21,7 +21,6 @@ public class ExchangeRateService {
 
     private void fetchRates() {
         try {
-            // Facem un apel HTTP GET către API
             Map<String, Object> response = restTemplate.getForObject(API_URL, Map.class);
             if (response != null && response.containsKey("rates")) {
                 this.rates = (Map<String, Double>) response.get("rates");

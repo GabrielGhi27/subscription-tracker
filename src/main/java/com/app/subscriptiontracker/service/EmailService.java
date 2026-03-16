@@ -28,7 +28,6 @@ public class EmailService {
         mailSender.send(message);
     }
 
-    @Async // NOU: Metoda care trimite email-ul la înregistrare, tot în fundal
     public void sendWelcomeEmail(String toEmail, String name) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail); // Dinamica - trimite pe emailul primit ca parametru

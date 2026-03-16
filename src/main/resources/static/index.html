@@ -14,7 +14,7 @@
             min-height: 100vh;
         }
 
-        /* AUTH */
+
         #auth-section {
             display: flex;
             justify-content: center;
@@ -115,7 +115,7 @@
 
         .error { color: #e74c3c; font-size: 13px; margin-top: 8px; text-align: center; }
 
-        /* DASHBOARD */
+
         #dashboard-section { display: none; }
 
         nav {
@@ -149,7 +149,7 @@
 
         .container { max-width: 1100px; margin: 0 auto; padding: 32px 16px; }
 
-        /* SUMMARY */
+
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -180,7 +180,7 @@
 
         .summary-card .value.green { color: #2ecc71; }
 
-        /* ADD FORM */
+
         .add-section {
             background: #1a1a2e;
             border: 1px solid #2d2d4e;
@@ -222,7 +222,7 @@
             margin-top: 4px;
         }
 
-        /* SUBSCRIPTIONS LIST */
+
         .list-header {
             display: flex;
             justify-content: space-between;
@@ -271,7 +271,7 @@
             border-radius: 12px;
         }
 
-        /* Stilizare pentru Iconițe și Badge-uri */
+
         .sub-icon {
             width: 48px;
             height: 48px;
@@ -381,7 +381,7 @@
             opacity: 1;
         }
 
-        /* Butonul plutitor de adăugare */
+
         .fab-button {
             position: fixed;
             bottom: 30px;
@@ -409,11 +409,11 @@
         #dashboard-section {
             display: none;
             flex-direction: column;
-            min-height: 100vh; /* Ocupă tot ecranul pe înălțime */
+            min-height: 100vh;
         }
 
         .container {
-            flex: 1; /* Împinge footer-ul în jos */
+            flex: 1;
             width: 100%;
             max-width: 1100px;
             margin: 0 auto;
@@ -421,8 +421,8 @@
         }
 
         nav {
-            background: rgba(15, 15, 26, 0.75); /* Ușor transparent */
-            backdrop-filter: blur(12px); /* Efect de sticlă mată */
+            background: rgba(15, 15, 26, 0.75);
+            backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(124, 106, 247, 0.2);
             position: sticky;
@@ -530,7 +530,7 @@
             background: #0f0f1a;
             color: #888;
             font-size: 13px;
-            margin-top: auto; /* Îl împinge mereu jos */
+            margin-top: auto;
         }
 
         .footer-heart {
@@ -561,7 +561,7 @@
 </head>
 <body>
 
-<!-- AUTH -->
+
 <div id="auth-section">
     <div class="auth-card">
         <h1>💳 SubTracker</h1>
@@ -572,7 +572,7 @@
             <button class="auth-tab" onclick="showTab('register')">Register</button>
         </div>
 
-        <!-- Login -->
+
         <div id="login-form">
             <input type="email" id="login-email" placeholder="Email">
             <input type="password" id="login-password" placeholder="Parolă">
@@ -580,7 +580,7 @@
             <div class="error" id="login-error"></div>
         </div>
 
-        <!-- Register -->
+
         <div id="register-form" style="display:none">
             <input type="text" id="reg-name" placeholder="Numele tău">
             <input type="email" id="reg-email" placeholder="Email">
@@ -591,7 +591,6 @@
     </div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard-section">
     <nav>
         <div class="nav-container">
@@ -616,7 +615,7 @@
 
     <div class="container">
 
-        <!-- Summary -->
+
         <div class="summary-grid">
             <div class="summary-card">
                 <div class="label">Total abonamente</div>
@@ -641,7 +640,7 @@
                 <canvas id="expensesChart"></canvas>
             </div>
         </div>
-        <!-- Add Subscription -->
+
         <button class="fab-button" onclick="openModal()" title="Adaugă Abonament Nou">
             <i class="fa-solid fa-plus"></i>
         </button>
@@ -669,7 +668,7 @@
             </div>
         </div>
 
-        <!-- Subscriptions List -->
+
         <div class="list-header">
             <h2>📋 Abonamentele tale</h2>
         </div>
@@ -687,13 +686,11 @@
     let token = localStorage.getItem('token');
     let userId = localStorage.getItem('userId');
     let myChart = null;
-    let currentSubscriptions = []; // Va ține minte lista curentă
-    let editingId = null; // Va ține minte ID-ul abonamentului pe care îl edităm
+    let currentSubscriptions = [];
+    let editingId = null;
 
-    // Dacă e deja logat
     if (token && userId) showDashboard();
 
-    // ---- AUTH ----
     function showTab(tab) {
         document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
         document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
@@ -761,7 +758,7 @@
         document.getElementById('dashboard-section').style.display = 'none';
     }
 
-    // ---- DASHBOARD ----
+
     function showDashboard() {
         document.getElementById('auth-section').style.display = 'none';
         document.getElementById('dashboard-section').style.display = 'block';
@@ -788,14 +785,13 @@
             return;
         }
 
-        // 1. Logica de sortare: Cele care expiră cel mai curând apar primele
+
         const today = new Date();
         today.setHours(0,0,0,0);
 
         currentSubscriptions = data;
         data.sort((a, b) => new Date(a.billingDate) - new Date(b.billingDate));
 
-        // 2. Funcție pentru a alege iconița potrivită bazată pe nume
         const getIconForName = (name) => {
             const n = name.toLowerCase();
             if (n.includes('netflix') || n.includes('hbo') || n.includes('disney') || n.includes('prime')) return 'fa-solid fa-film';
@@ -803,16 +799,15 @@
             if (n.includes('sala') || n.includes('gym') || n.includes('fitness')) return 'fa-solid fa-dumbbell';
             if (n.includes('internet') || n.includes('orange') || n.includes('vodafone') || n.includes('digi')) return 'fa-solid fa-wifi';
             if (n.includes('cloud') || n.includes('drive') || n.includes('icloud')) return 'fa-solid fa-cloud';
-            return 'fa-solid fa-credit-card'; // Iconiță default
+            return 'fa-solid fa-credit-card';
         };
 
-        // 3. Generăm lista HTML îmbunătățită
+
         list.innerHTML = data.map(sub => {
             const billDate = new Date(sub.billingDate);
             const diffTime = billDate - today;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-            // Setăm badge-ul în funcție de zilele rămase
             let urgencyBadge = '';
             if (diffDays < 0) {
                 urgencyBadge = `<span class="badge-urgent"><i class="fa-solid fa-triangle-exclamation"></i> Plată întârziată!</span>`;
@@ -855,16 +850,13 @@
     function renderChart(subscriptions) {
         const ctx = document.getElementById('expensesChart').getContext('2d');
 
-        // Dacă există deja un grafic desenat, îl distrugem (pentru a-l redesena actualizat)
         if (myChart != null) {
             myChart.destroy();
         }
 
-        // Extragem numele și sumele
         const labels = subscriptions.map(sub => sub.name);
         const amounts = subscriptions.map(sub => sub.amount);
 
-        // Culori vibrante pentru grafic
         const colors = ['#7c6af7', '#e74c3c', '#2ecc71', '#f1c40f', '#9b59b6', '#e67e22', '#3498db'];
 
         myChart = new Chart(ctx, {
@@ -919,45 +911,39 @@
         }
     }
 
-    // Deschide modalul curat pentru o ADĂUGARE NOUĂ
     function openModal() {
         editingId = null; // Resetăm starea
 
-        // Curățăm câmpurile
         document.getElementById('f-name').value = '';
         document.getElementById('f-amount').value = '';
         document.getElementById('f-date').value = '';
         document.getElementById('f-currency').value = 'RON'; // Default
 
-        // Setăm textele pentru Mod Adăugare
+
         document.getElementById('modal-title').innerHTML = '✨ Adaugă abonament';
         document.getElementById('btn-save-modal').textContent = 'Adaugă acum';
 
         document.getElementById('add-modal').classList.add('active');
     }
 
-    // Deschide modalul completat pentru EDITARE
     function openEditModal(id) {
-        editingId = id; // Salvăm ID-ul pe care lucrăm
+        editingId = id;
 
-        // Găsim abonamentul în lista salvată
         const sub = currentSubscriptions.find(s => s.id === id);
 
-        // Populăm formularul cu datele lui
         document.getElementById('f-name').value = sub.name;
         document.getElementById('f-amount').value = sub.amount;
         document.getElementById('f-currency').value = sub.currency;
         document.getElementById('f-date').value = sub.billingDate;
         document.getElementById('f-cycle').value = sub.cycle;
 
-        // Setăm textele pentru Mod Editare
+
         document.getElementById('modal-title').innerHTML = '✏️ Editează abonamentul';
         document.getElementById('btn-save-modal').textContent = 'Salvează modificările';
 
         document.getElementById('add-modal').classList.add('active');
     }
 
-    // Funcție UNIVERSALĂ pentru Salvare (știe singură dacă e Add sau Edit)
     async function saveSubscription() {
         const body = {
             name: document.getElementById('f-name').value,
@@ -969,7 +955,6 @@
         };
 
         try {
-            // Dacă editingId are un număr, facem PUT (Editare). Dacă e null, facem POST (Adăugare)
             const url = editingId ? `${API}/subscriptions/${editingId}` : `${API}/subscriptions`;
             const method = editingId ? 'PUT' : 'POST';
 
@@ -997,7 +982,6 @@
     }
 
     function showToast(message, type = 'success') {
-        // Creăm containerul dacă nu există
         let container = document.getElementById('toast-container');
         if (!container) {
             container = document.createElement('div');
@@ -1013,10 +997,8 @@
 
         container.appendChild(toast);
 
-        // Oprim animația și o pornim pe cea de ieșire după 3 secunde
         setTimeout(() => {
             toast.style.animation = 'fadeOutRight 0.4s ease forwards';
-            // Ștergem elementul din HTML după ce se termină animația
             setTimeout(() => toast.remove(), 400);
         }, 3000);
     }

@@ -22,20 +22,17 @@ public class SubscriptionService {
     public Map<String, Object> getSummary(Long userId) {
         List<Subscription> subscriptions = subscriptionRepository.findByUserId(userId);
 
-        // Total pe lună (NOU: convertim fiecare sumă în RON înainte să o adunăm)
         BigDecimal monthlyTotal = subscriptions.stream()
                 .filter(s -> s.getCycle().equals("MONTHLY"))
                 .map(s -> exchangeRateService.convertToRon(s.getAmount(), s.getCurrency()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // Total anual (NOU: convertim fiecare sumă în RON)
         BigDecimal yearlyTotal = subscriptions.stream()
                 .filter(s -> s.getCycle().equals("YEARLY"))
                 .map(s -> exchangeRateService.convertToRon(s.getAmount(), s.getCurrency()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .add(monthlyTotal.multiply(BigDecimal.valueOf(12)));
 
-        // Cel mai scump abonament (Opțional: ca să fii 100% corect, aici poți compara tot suma convertită în RON)
         Optional<Subscription> mostExpensive = subscriptions.stream()
                 .max(Comparator.comparing(s -> exchangeRateService.convertToRon(s.getAmount(), s.getCurrency())));
 
@@ -48,7 +45,6 @@ public class SubscriptionService {
         return summary;
     }
 
-    // Trebuie să pui la loc și metodele pe care le-am omis mai sus (add, get, update, delete)
     public List<Subscription> getSubscriptionsByUser(Long userId) {
         return subscriptionRepository.findByUserId(userId);
     }

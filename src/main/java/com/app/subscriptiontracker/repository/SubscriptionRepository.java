@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
     List<Subscription> findByUserId(Long userId);
-    List<Subscription> findByBillingDate(LocalDate date); // folosit de Cron Job
+    List<Subscription> findByBillingDate(LocalDate date);
 }

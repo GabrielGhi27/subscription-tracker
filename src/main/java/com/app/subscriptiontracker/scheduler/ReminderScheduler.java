@@ -21,7 +21,7 @@ public class ReminderScheduler {
         this.emailService = emailService;
     }
 
-    @Scheduled(cron = "0 0 0 * * *") // Rulează în fiecare noapte la 00:00
+    @Scheduled(cron = "0 0 0 * * *")
     public void sendRenewalReminders() {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         List<Subscription> upcoming = subscriptionRepository.findByBillingDate(tomorrow);
