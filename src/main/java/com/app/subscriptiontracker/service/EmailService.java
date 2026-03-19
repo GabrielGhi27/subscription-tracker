@@ -28,6 +28,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    @Async
     public void sendWelcomeEmail(String toEmail, String name) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail); // Dinamica - trimite pe emailul primit ca parametru
