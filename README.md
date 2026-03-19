@@ -4,6 +4,8 @@
 
 ---
 
+## Live demo: https://subscription-tracker-webv.onrender.com/
+
 ## ✨ Functionalitati Principale
 
 * **🔐 Securitate si Autentificare (Stateless):** Sistem complet de Inregistrare/Logare folosind tokenuri JWT (JSON Web Tokens) salvate in `LocalStorage` si parole criptate cu BCrypt.
